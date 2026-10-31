@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Life Simulator — eighteen to eighty</title>
+  <meta name="description" content="A tiny life simulator: pick a path at 18, then live one year at a time.">
+  <meta name="color-scheme" content="dark">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%230d1526'/%3E%3Cpath d='M6 17h5l3-7 4 13 3-6h5' fill='none' stroke='%235eead4' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <div class="aurora" aria-hidden="true">
+    <span class="orb orb-a"></span>
+    <span class="orb orb-b"></span>
+    <span class="orb orb-c"></span>
+    <span class="grid"></span>
+  </div>
+
+  <div id="app" class="app" data-ready="false">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" role="img">
+            <path d="M4 18h6l3.5-8 5 15 3.5-7h6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <span class="brand-text">
+          <strong>Life Simulator</strong>
+          <small>eighteen to eighty</small>
+        </span>
+      </div>
+      <div class="chips">
+        <span class="chip" id="chip-age">Age 18</span>
+        <span class="chip chip-career" id="chip-career">Undecided</span>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="panel panel-play" aria-labelledby="play-title">
+        <div id="setup-view" class="view">
+          <p class="eyebrow">Chapter one</p>
+          <h2 id="play-title">Who will you become?</h2>
+          <p class="lede">
+            You are 18, with <strong>$1,000</strong> and a whole life ahead of you.
+            Pick a path — then live one year at a time, earning, ageing, and rolling the dice.
+          </p>
+
+          <label class="field" for="name-input">
+            <span>Your name</span>
+            <input id="name-input" name="name" type="text" value="Sam" maxlength="24" autocomplete="off" spellcheck="false">
+          </label>
+
+          <div class="careers" role="group" aria-label="Choose a career path">
+            <button type="button" class="career" data-career="college">
+              <span class="career-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M2.5 9.5 12 4.5l9.5 5-9.5 5-9.5-5Z"/><path d="M6.5 11.6v4.2c0 1.7 2.5 3.2 5.5 3.2s5.5-1.5 5.5-3.2v-4.2"/><path d="M21 10v5"/></svg>
+              </span>
+              <span class="career-body">
+                <span class="career-name">University</span>
+                <span class="career-desc">Pay $800 now. Four lean years, then a $75k engineering career.</span>
+              </span>
+              <span class="career-tag tag-long">Long game</span>
+            </button>
+
+            <button type="button" class="career" data-career="retail">
+              <span class="career-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M5.5 8.5h13l1.2 10.5H4.3L5.5 8.5Z"/><path d="M9 8.5V7a3 3 0 0 1 6 0v1.5"/></svg>
+              </span>
+              <span class="career-body">
+                <span class="career-name">Retail job</span>
+                <span class="career-desc">Start immediately. Steady $24k a year, no tuition, no surprises.</span>
+              </span>
+              <span class="career-tag tag-safe">Steady</span>
+            </button>
+
+            <button type="button" class="career" data-career="creator">
+              <span class="career-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><rect x="3" y="6" width="13" height="12" rx="3"/><path d="m16 11 4.5-3v8L16 13"/><circle cx="8" cy="12" r="1.6"/></svg>
+              </span>
+              <span class="career-body">
+                <span class="career-name">Content creator</span>
+                <span class="career-desc">Mostly quiet years, the odd viral one. $2k to $80k a year.</span>
+              </span>
+              <span class="career-tag tag-risk">Gamble</span>
+            </button>
+          </div>
+
+          <p class="hint">Money later buys healthcare and comfort — it is not just a score.</p>
+        </div>
+
+        <div id="play-view" class="view" hidden>
+          <div class="turn-head">
+            <div>
+              <p class="eyebrow" id="turn-eyebrow">Year 1</p>
+              <h2 id="turn-title">Make it count.</h2>
+            </div>
+            <button id="next-year" class="btn-primary" type="button">
+              Live another year
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </button>
+          </div>
+
+          <ol id="log" class="log" aria-live="polite" aria-label="Life events"></ol>
+        </div>
+      </section>
+
+      <aside class="panel panel-stats" aria-labelledby="stats-title">
+        <div class="stats-head">
+          <h2 id="stats-title">Vitals</h2>
+          <span class="pill" id="status-pill">Ready</span>
+        </div>
+
+        <div class="money">
+          <span class="label">Net worth</span>
+          <strong id="stat-money">$1,000</strong>
+        </div>
+
+        <div class="meter-block">
+          <div class="meter-label"><span>Health</span><span id="health-value">100%</span></div>
+          <div class="meter" role="img" aria-label="Health meter"><span id="health-fill" class="fill fill-health"></span></div>
+        </div>
+
+        <div class="meter-block">
+          <div class="meter-label"><span>Happiness</span><span id="happiness-value">100%</span></div>
+          <div class="meter" role="img" aria-label="Happiness meter"><span id="happiness-fill" class="fill fill-happiness"></span></div>
+        </div>
+
+        <dl class="facts">
+          <div><dt>Age</dt><dd id="fact-age">18</dd></div>
+          <div><dt>Career</dt><dd id="fact-career">Undecided</dd></div>
+          <div><dt>Years lived</dt><dd id="fact-years">0</dd></div>
+        </dl>
+
+        <p class="footnote">Stats stay between 0 and 100. If either hits 0, the run ends.</p>
+      </aside>
+    </main>
+
+    <footer class="footer">
+      <span>Life Simulator</span>
+      <span>Browser port of <code>life_simulator.py</code></span>
+    </footer>
+  </div>
+
+  <div id="ending" class="ending" hidden>
+    <div class="ending-card" role="dialog" aria-modal="true" aria-labelledby="ending-title">
+      <p class="eyebrow" id="ending-eyebrow">The end</p>
+      <h2 id="ending-title">A life well lived</h2>
+      <p id="ending-body"></p>
+      <dl class="ending-stats">
+        <div><dt>Age</dt><dd id="ending-age">18</dd></div>
+        <div><dt>Career</dt><dd id="ending-career">—</dd></div>
+        <div><dt>Net worth</dt><dd id="ending-money">$0</dd></div>
+      </dl>
+      <button id="restart" class="btn-primary" type="button">Live again</button>
+    </div>
+  </div>
+</body>
+</html>
